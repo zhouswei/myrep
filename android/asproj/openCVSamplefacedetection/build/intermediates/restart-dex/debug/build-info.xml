@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instant-run
+    abi="arm64-v8a,armeabi-v7a,armeabi"
+    api-level="21"
+    density="xxhdpi"
+    format="7"
+    timestamp="483553173239446"
+    token="3394623187749980522" >
+
+    <task
+        name="javac"
+        duration="57" />
+    <task
+        name="instant-run-dex"
+        duration="0" />
+    <task
+        name="instant-run-transform"
+        duration="11" />
+    <task
+        name="verifier"
+        duration="2" />
+
+    <artifact
+        location="E:\asproj\openCVSamplefacedetection\build\outputs\apk\openCVSamplefacedetection-debug.apk"
+        type="MAIN" />
+
+    <build timestamp="483553173239446" >
+        <artifact
+            location="E:\asproj\openCVSamplefacedetection\build\outputs\apk\openCVSamplefacedetection-debug.apk"
+            type="MAIN" />
+    </build>
+
+</instant-run>

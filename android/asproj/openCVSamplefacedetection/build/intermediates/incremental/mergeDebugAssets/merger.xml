@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="unspecified"><source path="E:\asproj\openCVSamplefacedetection\build\intermediates\exploded-aar\asproj\openCVLibrary2410\unspecified\assets"/></dataSet><dataSet config="main"><source path="E:\asproj\openCVSamplefacedetection\src\main\assets"/><source path="E:\asproj\openCVSamplefacedetection\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="E:\asproj\openCVSamplefacedetection\src\debug\assets"/></dataSet></merger>
