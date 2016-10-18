@@ -11,79 +11,15 @@ from jinja2 import Environment, FileSystemLoader
 class GenjavaFile:	
 	env = Environment(loader=FileSystemLoader('androidcodeapp/templates'))
 	parentName = 'demo'
-	def generate_activity(self):
-		self.parentName = input('please enter class name:')		
-		className = '%sActivity'%self.parentName.capitalize()
-		xmlName = 'activity_%s'%self.parentName.lower()
-		filepath = r'androidcodeapp/output/%s.java'%className
-		xmlfilepath = r'androidcodeapp/output/%s.xml'%xmlName
-		class_file = open(filepath, 'w')
-		xml_file = open(xmlfilepath, 'w')
-		lines = []
-		xmllines = []
-		#读取模板文件
-
-		# template_file = open(r'template/activity_java.template','r')
-		# tmpl = Template(template_file.read())
-		#替换模板里面的变量
-		# lines.append(tmpl.substitute(
-		# 	CLASSNAME = className,
-		# 	))
-		# template_file.close()
-		#读取模板文件
-		# xmltemplate_file = open(r'activity_xml.template','r')
-		# xmltmpl = Template(xmltemplate_file.read())
-		#替换模板里面的变量
-		# xmllines.append(xmltmpl.substitute(
-		# 	XMLNAME = className))
-		# template_file.close()
-
-		adptername = input('please enter adapter name else not gen a list:')		
-
-		template_file = self.env.get_template(r'activity_java.template')
-		if adptername == 'null':
-			lines = template_file.render(CLASSNAME = className,
-									DATE = datetime.now().strftime('%Y/%m/%d'),
-									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
-									BEANNAME = '%sBean'%self.parentName,									
-									LISTBEANNAME = '%sListBean'%self.parentName,
-									INFONAME = '%sInfo'%self.parentName)
-		else:
-			lines = template_file.render(CLASSNAME = className,
-									DATE = datetime.now().strftime('%Y/%m/%d'),
-									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
-									BEANNAME = '%sBean'%self.parentName,
-									ADAPTERNAME = adptername,
-									LISTBEANNAME = '%sListBean'%self.parentName,
-									INFONAME = '%sInfo'%self.parentName)
-		
-
-		utf8lines = lines.encode('utf-8')
-
-		class_file.writelines(utf8lines)
-		class_file.close()
-		
-
-		
-
-		xmltemplate_file = self.env.get_template(r'activity_xml.template')
-		xmllines = xmltemplate_file.render(CLASSNAME = className)
-
-		utf8lxmllines = xmllines.encode('utf-8')
-
-		xml_file.writelines(utf8lxmllines)
-		xml_file.close()
-		
-		print 'generate successful %s.java and %s.xml '%(className,xmlName)
-		
-
-	def generate_bean(self):
-		beanName = '%sBean'%self.parentName
+	def generate_bean(self, name, packagename):
+		#生成一个bean文件
+		# self.parentName = raw_input('please enter obj name:')
+		vars = input('please enter a bean dic key(name):value(type)::')
+		beanName = name
 		filepath = r'androidcodeapp/output/%s.java'%beanName
 		class_file = open(filepath, 'w')
 		#请输入一个字典
-		self.parentName = raw_input('please enter obj name:')
-		vars = input('please enter a dic key(name):value(type)::')
+		
 
 		lines = []
 
@@ -111,6 +47,7 @@ class GenjavaFile:
 		header_template_file = self.env.get_template(r'bean_java.template')
 		lines = header_template_file.render(CLASSNAME = beanName,
 									DATE = datetime.now().strftime('%Y/%m/%d'),
+									PACKAGENAME = packageName,		
 									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
 									DIC = vars)
 		print type(lines)
@@ -122,26 +59,139 @@ class GenjavaFile:
 		# header_template_file.close()
 		print 'generate successful %s.java'%beanName
 
-	def generate_adapter(self):
-		# adapterName = '%sAdapter'%self.parentName
-		# filepath = r'output/%s.java'%adapterName
-		# class_file = open(filepath, 'w')
+	def generate_info(self, name, packagename):
+		#生成一个info文件
+		#请输入一个字典
+		# self.parentName = raw_input('please enter obj name:')
+		vars = input('please enter a info dic key(name):value(type)::')
+		infoName = name
+		filepath = r'androidcodeapp/output/%s.java'%infoName
+		class_file = open(filepath, 'w')
+		
 
-		# lines = []
+		lines = []
 
-		# #读取模板文件
-		# template_file = open(r'template/adapter_java.template','r')
+		
+
+		header_template_file = self.env.get_template(r'info_java.template')
+		lines = header_template_file.render(CLASSNAME = infoName,
+									DATE = datetime.now().strftime('%Y/%m/%d'),
+									PACKAGENAME = packageName,		
+									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
+									DIC = vars)
+		print type(lines)
+		utf8str = lines.encode('utf-8')
+		print type(utf8str)
+		class_file.writelines(utf8str)
+		class_file.close()
+		# template_file.close()
+		# header_template_file.close()
+		print 'generate successful %s.java'%infoName
+
+	def generate_adapter(self, name,beanname, packagename):
+		#生成一个adapter文件
+		adapterName = name
+		filepath = r'androidcodeapp/output/%s.java'%adapterName
+		class_file = open(filepath, 'w')
+		header_template_file = self.env.get_template(r'adapter_java.template')
+		lines = header_template_file.render(ADAPTERNAME = adapterName,
+									BEANNAME = beanname,
+									PACKAGENAME = packageName,		
+									DATE = datetime.now().strftime('%Y/%m/%d'),
+									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'))
+		print type(lines)
+		utf8str = lines.encode('utf-8')
+		print type(utf8str)
+		class_file.writelines(utf8str)
+		class_file.close()
+
+		print 'generate successful %s.java'%adapterName
+		print 'getnrate end'
+	def generate_activity(self):
+		#生成一个activity和对应的布局xml
+		packageName = raw_input('please enter packagename name:')		
+		self.parentName = raw_input('please enter class name:')		
+		className = '%sActivity'%self.parentName.capitalize()
+		xmlName = 'activity_%s'%self.parentName.lower()
+		filepath = r'androidcodeapp/output/%s.java'%className
+		xmlfilepath = r'androidcodeapp/output/%s.xml'%xmlName
+		class_file = open(filepath, 'w')
+		xml_file = open(xmlfilepath, 'w')
+		lines = []
+		xmllines = []
+		#读取模板文件
+
+		# template_file = open(r'template/activity_java.template','r')
 		# tmpl = Template(template_file.read())
-
-		# #替换模板里面的变量
+		#替换模板里面的变量
 		# lines.append(tmpl.substitute(
-		# 	ADAPTERNAME = adapterName))
+		# 	CLASSNAME = className,
+		# 	))
+		# template_file.close()
+		#读取模板文件
+		# xmltemplate_file = open(r'activity_xml.template','r')
+		# xmltmpl = Template(xmltemplate_file.read())
+		#替换模板里面的变量
+		# xmllines.append(xmltmpl.substitute(
+		# 	XMLNAME = className))
+		# template_file.close()
 
-		# class_file.writelines(lines)
-		# class_file.close()
+		adpter = raw_input('please enter adapter name else not gen a list:')		
+		adptername = '%sAdapter'%adpter
 
-		# print 'generate successful %s.java'%adapterName
-		print 'ssss'
+		bean = raw_input('please enter bean name :')
+		beanname = '%sBean'%bean
+
+		info = raw_input('please enter info name :')
+		infoname = '%sInfo'%info
+
+		template_file = self.env.get_template(r'activity_java.template')
+		if adptername == 'null':
+			lines = template_file.render(CLASSNAME = className,
+									DATE = datetime.now().strftime('%Y/%m/%d'),
+									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
+									BEANNAME = beanname,
+									PACKAGENAME = packageName,									
+									LISTBEANNAME = '%sListBean'%self.parentName,
+									INFONAME = infoname)
+		else:
+			lines = template_file.render(CLASSNAME = className,
+									DATE = datetime.now().strftime('%Y/%m/%d'),
+									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
+									BEANNAME = beanname,
+									PACKAGENAME = packageName,
+									ADAPTERNAME = adptername,
+									LISTBEANNAME = '%sListBean'%self.parentName,
+									INFONAME = infoname)
+		
+
+		utf8lines = lines.encode('utf-8')
+
+		class_file.writelines(utf8lines)
+		class_file.close()
+		
+
+		
+
+		xmltemplate_file = self.env.get_template(r'activity_xml.template')
+		xmllines = xmltemplate_file.render(CLASSNAME = className)
+
+		utf8lxmllines = xmllines.encode('utf-8')
+
+		xml_file.writelines(utf8lxmllines)
+		xml_file.close()
+		
+		print 'generate successful %s.java and %s.xml '%(className,xmlName)
+
+
+		self.generate_bean(beanname, packageName)
+
+		self.generate_info(infoname, packageName)
+		if adptername != 'null':
+			self.generate_adapter(adptername, beanname, packageName)
+
+
+	
 
 
 

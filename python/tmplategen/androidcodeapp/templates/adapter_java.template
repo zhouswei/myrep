@@ -1,0 +1,87 @@
+package {{PACKAGENAME}}.adapter;
+/**
+ * {{ADAPTERNAME}}.java
+ * Created by zsw on {{DATE}}.
+ */
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.TextView;
+
+import {{PACKAGENAME}}.R;
+import {{PACKAGENAME}}.bean.{{BEANNAME}};
+
+import java.util.ArrayList;
+
+/**
+ * {{PACKAGENAME}}.adapter
+ * {{ADAPTERNAME}}
+ * 责任人:  zsw
+ * 修改人：
+ * 创建/修改时间: {{DATETIME}}
+ * Copyright ? 2014-2016 深圳掌通宝科技有限公司-版权所有
+ */
+public class {{ADAPTERNAME}} extends BaseAdapter{
+    ArrayList<{{BEANNAME}}> mList;
+    Context mContext;
+
+    public {{ADAPTERNAME}}(ArrayList<{{BEANNAME}}> mList, Context mContext) {
+        this.mList = mList;
+        this.mContext = mContext;
+    }
+    public ArrayList<{{BEANNAME}}> getmList(){
+        return this.mList;
+    }
+    public void setAdapter(ArrayList<{{BEANNAME}}> List){
+        this.mList = List;
+        notifyDataSetChanged();
+    }
+    public void addAdapter(ArrayList<{{BEANNAME}}> List){
+        for (int i = 0; i< List.size()&&List!= null; i++){
+            mList.add(List.get(i));
+        }
+        notifyDataSetChanged();
+    }
+    @Override
+    public int getCount() {
+        return mList.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return mList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        ViewHodler hodler = null;
+        if (convertView == null){
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.campana_list_item, null);
+
+            hodler = new ViewHodler();
+            
+
+            convertView.setTag(hodler);
+        }else{
+            hodler = (ViewHodler) convertView.getTag();
+
+        }
+        
+        
+
+        return convertView;
+    }
+    class ViewHodler{
+       
+    }
+}

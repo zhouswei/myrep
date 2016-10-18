@@ -1,11 +1,11 @@
-package {{PACKAGENAME}}.bean;
+package {{PACKAGENAME}}.info;
 /**
  * {{CLASSNAME}}.java
  * Created by zsw on {{DATE}}.
  */
 
 /**
- * {{PACKAGENAME}}.bean
+ * {{PACKAGENAME}}.info
  * {{CLASSNAME}}
  * 责任人:  zsw
  * 修改人：
@@ -25,6 +25,3 @@ public class {{CLASSNAME}} {
 		}
     {%- endfor %}
 }
-
-
-

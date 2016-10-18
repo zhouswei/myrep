@@ -1,4 +1,4 @@
-package com.ztb.magician.activities;
+package {{PACKAGENAME}}.activities;
 /**
 *{{CLASSNAME}}.java
 *Created by zsw on {{DATE}}.
@@ -17,24 +17,24 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.ztb.magician.AppLoader;
-import com.ztb.magician.R;
-import com.ztb.magician.adapter.TechInfoListAdapter;
-import com.ztb.magician.bean.CampanaTechSelectBean;
-import com.ztb.magician.bean.{{BEANNAME}};
+import {{PACKAGENAME}}.AppLoader;
+import {{PACKAGENAME}}.R;
+import {{PACKAGENAME}}.adapter.TechInfoListAdapter;
+import {{PACKAGENAME}}.bean.CampanaTechSelectBean;
+import {{PACKAGENAME}}.bean.{{BEANNAME}};
 {% if ADAPTERNAME is defined %}
-import com.ztb.magician.bean.{{LISTBEANNAME}};
+import {{PACKAGENAME}}.bean.{{LISTBEANNAME}};
 {% else %}
 
 {% endif %}
-import com.ztb.magician.info.NetInfo;
-import com.ztb.magician.info.{{INFONAME}};
-import com.ztb.magician.utils.Constants;
-import com.ztb.magician.utils.HttpClientConnector;
-import com.ztb.magician.utils.HttpHandler;
-import com.ztb.magician.utils.MagicianUserInfo;
-import com.ztb.magician.utils.ToastUtil;
-import com.ztb.magician.widget.CustomLoadingView;
+import {{PACKAGENAME}}.info.NetInfo;
+import {{PACKAGENAME}}.info.{{INFONAME}};
+import {{PACKAGENAME}}.utils.Constants;
+import {{PACKAGENAME}}.utils.HttpClientConnector;
+import {{PACKAGENAME}}.utils.HttpHandler;
+import {{PACKAGENAME}}.utils.MagicianUserInfo;
+import {{PACKAGENAME}}.utils.ToastUtil;
+import {{PACKAGENAME}}.widget.CustomLoadingView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
