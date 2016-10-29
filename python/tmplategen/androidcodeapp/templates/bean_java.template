@@ -14,13 +14,13 @@ package {{PACKAGENAME}}.bean;
  */
 public class {{CLASSNAME}} {
 	{% for NAME in DIC %}
-		private {{DIC.NAME}} {{NAME}};
+		private {{DIC[NAME]}} {{NAME}};
 
-		public {{DIC.NAME}} get{{NAME|capitalize()}}() {
+		public {{DIC[NAME]}} get{{NAME|capitalize()}}() {
 		    return {{NAME}};
 		}
 
-		public void set{{NAME|capitalize()}}({{DIC.NAME}} {{NAME}}) {
+		public void set{{NAME|capitalize()}}({{DIC[NAME]}} {{NAME}}) {
 		    this.{{NAME}} = {{NAME}};
 		}
     {%- endfor %}

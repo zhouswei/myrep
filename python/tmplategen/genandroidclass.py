@@ -4,7 +4,7 @@
 的activity 的类，里面有写好的handler onclick 
 以及 必要的 声明周期方法和 标题栏的设置
 '''
-import os, sys, re, traceback
+import os, sys, re, traceback, shutil
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
@@ -47,7 +47,7 @@ class GenjavaFile:
 		header_template_file = self.env.get_template(r'bean_java.template')
 		lines = header_template_file.render(CLASSNAME = beanName,
 									DATE = datetime.now().strftime('%Y/%m/%d'),
-									PACKAGENAME = packageName,		
+									PACKAGENAME = packagename,		
 									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
 									DIC = vars)
 		print type(lines)
@@ -55,6 +55,7 @@ class GenjavaFile:
 		print type(utf8str)
 		class_file.writelines(utf8str)
 		class_file.close()
+		shutil.copy(filepath,r'E:/reconfiguration/magiciantrunk/src/main/java/com/ztb/magician/bean/%s.java'%beanName)
 		# template_file.close()
 		# header_template_file.close()
 		print 'generate successful %s.java'%beanName
@@ -76,7 +77,7 @@ class GenjavaFile:
 		header_template_file = self.env.get_template(r'info_java.template')
 		lines = header_template_file.render(CLASSNAME = infoName,
 									DATE = datetime.now().strftime('%Y/%m/%d'),
-									PACKAGENAME = packageName,		
+									PACKAGENAME = packagename,		
 									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
 									DIC = vars)
 		print type(lines)
@@ -84,6 +85,7 @@ class GenjavaFile:
 		print type(utf8str)
 		class_file.writelines(utf8str)
 		class_file.close()
+		shutil.copy(filepath,r'E:/reconfiguration/magiciantrunk/src/main/java/com/ztb/magician/info/%s.java'%infoName)
 		# template_file.close()
 		# header_template_file.close()
 		print 'generate successful %s.java'%infoName
@@ -96,7 +98,7 @@ class GenjavaFile:
 		header_template_file = self.env.get_template(r'adapter_java.template')
 		lines = header_template_file.render(ADAPTERNAME = adapterName,
 									BEANNAME = beanname,
-									PACKAGENAME = packageName,		
+									PACKAGENAME = packagename,		
 									DATE = datetime.now().strftime('%Y/%m/%d'),
 									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'))
 		print type(lines)
@@ -104,7 +106,7 @@ class GenjavaFile:
 		print type(utf8str)
 		class_file.writelines(utf8str)
 		class_file.close()
-
+		shutil.copy(filepath,r'E:/reconfiguration/magiciantrunk/src/main/java/com/ztb/magician/adapter/%s.java'%adapterName)
 		print 'generate successful %s.java'%adapterName
 		print 'getnrate end'
 	def generate_activity(self):
@@ -121,20 +123,7 @@ class GenjavaFile:
 		xmllines = []
 		#读取模板文件
 
-		# template_file = open(r'template/activity_java.template','r')
-		# tmpl = Template(template_file.read())
-		#替换模板里面的变量
-		# lines.append(tmpl.substitute(
-		# 	CLASSNAME = className,
-		# 	))
-		# template_file.close()
-		#读取模板文件
-		# xmltemplate_file = open(r'activity_xml.template','r')
-		# xmltmpl = Template(xmltemplate_file.read())
-		#替换模板里面的变量
-		# xmllines.append(xmltmpl.substitute(
-		# 	XMLNAME = className))
-		# template_file.close()
+		
 
 		adpter = raw_input('please enter adapter name else not gen a list:')		
 		adptername = '%sAdapter'%adpter
@@ -151,7 +140,8 @@ class GenjavaFile:
 									DATE = datetime.now().strftime('%Y/%m/%d'),
 									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
 									BEANNAME = beanname,
-									PACKAGENAME = packageName,									
+									PACKAGENAME = packageName,
+									XMLNAME = xmlName,								
 									LISTBEANNAME = '%sListBean'%self.parentName,
 									INFONAME = infoname)
 		else:
@@ -160,16 +150,17 @@ class GenjavaFile:
 									DATETIME = datetime.now().strftime('%Y/%m/%d-%H:%M'),									
 									BEANNAME = beanname,
 									PACKAGENAME = packageName,
-									ADAPTERNAME = adptername,
-									LISTBEANNAME = '%sListBean'%self.parentName,
+									XMLNAME = xmlName,	
+									ADAPTERNAME = adptername,									
 									INFONAME = infoname)
 		
 
 		utf8lines = lines.encode('utf-8')
 
 		class_file.writelines(utf8lines)
-		class_file.close()
 		
+		class_file.close()
+		shutil.copy(filepath,r'E:/reconfiguration/magiciantrunk/src/main/java/com/ztb/magician/activities/%s.java'%className)
 
 		
 
@@ -180,6 +171,7 @@ class GenjavaFile:
 
 		xml_file.writelines(utf8lxmllines)
 		xml_file.close()
+		shutil.copy(xmlfilepath,r'E:/reconfiguration/magiciantrunk/src/main/res/layout/%s.xml'%xmlName)
 		
 		print 'generate successful %s.java and %s.xml '%(className,xmlName)
 

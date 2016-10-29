@@ -23,7 +23,7 @@ import {{PACKAGENAME}}.adapter.TechInfoListAdapter;
 import {{PACKAGENAME}}.bean.CampanaTechSelectBean;
 import {{PACKAGENAME}}.bean.{{BEANNAME}};
 {% if ADAPTERNAME is defined %}
-import {{PACKAGENAME}}.bean.{{LISTBEANNAME}};
+
 {% else %}
 
 {% endif %}
@@ -64,7 +64,7 @@ public class {{CLASSNAME}} extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_{{CLASSNAME}});
+        setContentView(R.layout.{{XMLNAME}});
         initView();
     }
     private void initView(){
@@ -82,7 +82,7 @@ public class {{CLASSNAME}} extends BaseActivity implements View.OnClickListener{
         loadingView.dismiss();
         {% if ADAPTERNAME is defined %}
         listView = (ListView) findViewById(R.id.list_id);
-        ArrayList<{{LISTBEANNAME}}> list = new ArrayList<{{LISTBEANNAME}}>();
+        ArrayList<{{BEANNAME}}> list = new ArrayList<{{BEANNAME}}>();
         
         mAdapter = new {{ADAPTERNAME}}(list,this);
         listView.setAdapter(mAdapter);
@@ -170,9 +170,9 @@ public class {{CLASSNAME}} extends BaseActivity implements View.OnClickListener{
                                 {{INFONAME}} subinfo = JSON.parseObject(info.getData(), {{INFONAME}}.class);
                                 if (subinfo != null){
                                     activity.mViewInfo = new {{BEANNAME}}();
-                                    ArrayList<{{LISTBEANNAME}}> list = new ArrayList<{{LISTBEANNAME}}>();
+                                    ArrayList<{{BEANNAME}}> list = new ArrayList<{{BEANNAME}}>();
                                     for (int i = 0; i < subinfo.getBill_item_list().size();i++){
-                                        {{LISTBEANNAME}} item = new {{LISTBEANNAME}}();
+                                        {{BEANNAME}} item = new {{BEANNAME}}();
                                         //add custom code
                                         list.add(item);
                                     }
