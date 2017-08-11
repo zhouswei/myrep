@@ -1,1 +1,1 @@
-2016.10.10 add ndk test
+* 2016.10.10 add ndk test
