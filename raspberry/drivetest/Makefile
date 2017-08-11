@@ -1,0 +1,2 @@
+ifneq ($(KERNELRELEASE),)
+
