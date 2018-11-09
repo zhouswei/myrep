@@ -1,0 +1,14 @@
+{
+  "name": "moscabroker",
+  "version": "1.0.0",
+  "description": "moscabrokerserver",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "zsw",
+  "license": "ISC",
+  "dependencies": {
+    "mosca": "^2.7.0"
+  }
+}

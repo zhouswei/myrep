@@ -1,0 +1,13 @@
+{
+  "name": "连锁店后台管理系统",
+  "version": "1.0.0",
+  "description": "项目API文档",
+  "title": "Custom apiDoc browser title",
+  "url" : "http://chain.handnear.com:8090",
+  "sampleUrl": "http://chain.handnear.com:8090",
+  "forceLanguage":"zh-cn",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  }
+}
