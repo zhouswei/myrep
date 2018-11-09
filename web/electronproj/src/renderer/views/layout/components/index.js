@@ -1,3 +1,7 @@
 export { default as Navbar } from './Navbar'
-export { default as Sidebar } from './Sidebar'
+export { default as Slidebar } from './Slidebar/index.vue'
+export { default as TagsView } from './TagsView'
 export { default as AppMain } from './AppMain'
+export { default as UserInfo } from './UserInfo'
+export { default as ChangePhone } from './ChangePhone'
+export { default as ChangePassword } from './ChangePassword'

@@ -6,34 +6,36 @@ const RATIO = 3
 
 export default {
   watch: {
-    $route(route) {
-      if (this.device === 'mobile' && this.sidebar.opened) {
-        store.dispatch('CloseSideBar', { withoutAnimation: false })
+    $route (route) {
+      if (this.device === 'mobile' && this.slidebar.opened) {
+        store.dispatch('closeSideBar', { withoutAnimation: false })
       }
     }
   },
-  beforeMount() {
+  beforeMount () {
     window.addEventListener('resize', this.resizeHandler)
   },
-  mounted() {
+  mounted () {
+    console.log('mobile adjust')
     const isMobile = this.isMobile()
     if (isMobile) {
-      store.dispatch('ToggleDevice', 'mobile')
-      store.dispatch('CloseSideBar', { withoutAnimation: true })
+      store.dispatch('toggleDevice', 'mobile')
+      store.dispatch('closeSideBar', { withoutAnimation: true })
     }
   },
   methods: {
-    isMobile() {
+    isMobile () {
       const rect = body.getBoundingClientRect()
+      console.log('isMoblie' + rect.width + WIDTH)
       return rect.width - RATIO < WIDTH
     },
-    resizeHandler() {
+    resizeHandler () {
       if (!document.hidden) {
         const isMobile = this.isMobile()
-        store.dispatch('ToggleDevice', isMobile ? 'mobile' : 'desktop')
+        store.dispatch('toggleDevice', isMobile ? 'mobile' : 'desktop')
 
         if (isMobile) {
-          store.dispatch('CloseSideBar', { withoutAnimation: true })
+          store.dispatch('closeSideBar', { withoutAnimation: true })
         }
       }
     }

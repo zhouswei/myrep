@@ -1,83 +1,120 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+// import Home from '@/views/Home'
+// import Foo from '@/views/Foo'
+// import AppWrapter from '@/views/Appwraper'
+// import demo from '@/views/demo'
 
-// in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
-// detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
+import Layout from '../views/layout/layout'
+// import HelloWorld from '@/components/HelloWorld'
+const _import = require('./_import_' + process.env.NODE_ENV)
 
 Vue.use(Router)
 
-/* Layout */
-import Layout from '../views/layout/Layout'
-
-/**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
-    title: 'title'               the name show in submenu and breadcrumb (recommend set)
-    icon: 'svg-name'             the icon show in the sidebar,
-  }
-**/
 export const constantRouterMap = [
-  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/404'), hidden: true },
-
   {
-    path: '/',
+    path: '',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
+    redirect: 'general',
+    meta: {
+      title: 'General',
+      icon: 'general'
+    },
     children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
-    }]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+      name: 'general',
+      path: 'general',
+      component: _import('general/general'),
+      meta: {
+        title: 'General',
+        icon: 'general'
       }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  { path: '*', redirect: '/404', hidden: true }
+    }],
+    hidden: false },
+  { path: '/login', component: _import('login/index'), hidden: true },
+  { path: '/authRedirect', component: _import('login/authRedirect'), hidden: true },
+  { path: '/401', component: _import('errorPage/401'), hidden: true },
+  { path: '/404', component: _import('errorPage/404'), hidden: true }
 ]
-
 export default new Router({
-  // mode: 'history', //后端支持可开
-  scrollBehavior: () => ({ y: 0 }),
+  mode: 'hash',
   routes: constantRouterMap
 })
 
+export const asyncRouterMap = [
+  {
+    path: '/shop',
+    id: 2,
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'shop',
+    alwaysShow: true,
+    meta: {
+      title: 'Shop',
+      icon: 'shop'
+    },
+    children: [
+      {path: 'shopmanager', id: 6, component: _import('shop/shopmanager'), name: 'shopmanager', meta: { title: 'ShopManager' }},
+      {path: 'employeemanager', id: 31, component: _import('shop/employeemanager'), name: 'employeemanager', meta: { title: 'EmployeeManager' }},
+      {path: 'techmanager', id: 32, component: _import('shop/techmanager'), name: 'techmanager', meta: { title: 'TechManager' }}
+    ]
+  },
+  {
+    path: '/member',
+    id: 3,
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'member',
+    meta: {
+      title: 'Member',
+      icon: 'member'
+    },
+    children: [
+      {path: 'membermanager', id: 33, component: _import('member/membermanager'), name: 'membermanager', meta: { title: 'MemberManager' }},
+      {path: 'chargerecord', id: 34, component: _import('member/chargerecord'), name: 'chargerecord', meta: { title: 'ChargeRecord' }},
+      {path: 'castrecord', id: 35, component: _import('member/castrecord'), name: 'castrecord', meta: { title: 'CastRecord' }},
+      {path: 'memberupdate', id: 39, component: _import('member/memberupdate'), name: 'memberupdate', meta: { title: 'MemberUpdate' }}
+    ]
+  },
+  {
+    path: '/data',
+    id: 4,
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'data',
+    meta: {
+      title: 'Data',
+      icon: 'data'
+    },
+    children: [
+      {path: 'businessstatistics', id: 12, component: _import('data/businessstatistics'), name: 'businessstatistics', meta: { title: 'BusinessStatistics' }},
+      {path: 'invoicingstatistics', id: 13, component: _import('data/invoicingstatistics'), name: 'invoicingstatistics', meta: { title: 'InvoicingStatistics' }},
+      {path: 'memberstatistics', id: 14, component: _import('data/memberstatistics'), name: 'memberstatistics', meta: { title: 'MemberStatistics' }},
+      {path: 'projstatistics', id: 36, component: _import('data/projstatistics'), name: 'projstatistics', meta: { title: 'ProjStatistics' }},
+      {path: 'clockstatistics', id: 37, component: _import('data/clockstatistics'), name: 'clockstatistics', meta: { title: 'ClockStatistics' }},
+      {path: 'operationrecord', id: 38, component: _import('data/operationrecord'), name: 'operationrecord', meta: { title: 'OperationRecord' }}
+    ]
+  },
+  {
+    path: '/setting',
+    id: 5,
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'setting',
+    alwaysShow: true,
+    meta: {
+      title: 'Setting',
+      icon: 'setting'
+    },
+    children: [
+      {path: 'enterpriseinfo', id: 24, component: _import('setting/enterpriseinfo'), name: 'enterpriseinfo', meta: { title: 'EnterpriseInfo' }},
+      {path: 'departmentmanager', id: 30, component: _import('setting/departmentmanager'), name: 'departmentmanager', meta: { title: 'DepartmentManager' }},
+      {path: 'rolemanager', id: 27, component: _import('setting/rolemanager'), name: 'rolemanager', meta: { title: 'RoleManager' }},
+      {path: 'usermanager', id: 26, component: _import('setting/usermanager'), name: 'usermanager', meta: { title: 'UserManager' }},
+      {path: 'membercardmanager', id: 28, component: _import('setting/membercardmanager'), name: 'membercardmanager', meta: { title: 'MemberCardManager' }},
+      {path: 'chargegiverule', id: 29, component: _import('setting/chargegiverule'), name: 'chargegiverule', meta: { title: 'ChargeGiveRule' }},
+      {path: 'weshopmanager', id: 41, component: _import('setting/weshopmanager'), name: 'weshopmanager', meta: { title: 'WeShopManager' }}
+      // {path: 'push', id: 41, component: _import('setting/push'), name: 'push', meta: { title: 'push' }}
+    ]
+  }
+
+]

@@ -19,7 +19,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
  * that provide pure *.vue files that need compiling
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
-let whiteListedModules = ['vue']
+let whiteListedModules = ['vue', 'element-ui', 'vc-popup-press-menu', 'js-cookie', 'mockjs', 'vue-router', 'vuex', 'axios', 'vue-i18n', 'nprogress']
 
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
@@ -33,13 +33,12 @@ let rendererConfig = {
     rules: [
       {
         test: /\.(js|vue)$/,
+        loader: 'eslint-loader',
         enforce: 'pre',
         exclude: /node_modules/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            formatter: require('eslint-friendly-formatter')
-          }
+        include: [path.join(__dirname, '../src/renderer')],
+        options: {
+          formatter: require('eslint-friendly-formatter')
         }
       },
       {
@@ -47,6 +46,13 @@ let rendererConfig = {
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: 'css-loader'
+        })
+      },
+      {
+        test: /\.styl$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'stylus-loader']
         })
       },
       {
@@ -82,6 +88,10 @@ let rendererConfig = {
         options: {
           symbolId: 'icon-[name]'
         }
+      },
+      {
+        test: /\.scss$/,
+        loaders: 'style-loader!css-loader!sass-loader'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
