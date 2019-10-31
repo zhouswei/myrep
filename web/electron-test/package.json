@@ -74,7 +74,7 @@
     "js-cookie": "^2.2.0",
     "mockjs": "^1.0.1-beta3",
     "mqtt": "^2.18.8",
-    "mqtt-packet": "^6.0.0",
+    "mqtt-packet": "^6.1.2",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "raw-loader": "^0.5.1",
