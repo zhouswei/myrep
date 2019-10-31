@@ -1,0 +1,9 @@
+E:\dotnetcoredemo\ModuleDemo\bin\Debug\netstandard2.0\ModuleDemo.deps.json
+E:\dotnetcoredemo\ModuleDemo\bin\Debug\netstandard2.0\ModuleDemo.dll
+E:\dotnetcoredemo\ModuleDemo\bin\Debug\netstandard2.0\ModuleDemo.pdb
+E:\dotnetcoredemo\ModuleDemo\obj\Debug\netstandard2.0\ModuleDemo.csprojAssemblyReference.cache
+E:\dotnetcoredemo\ModuleDemo\obj\Debug\netstandard2.0\ModuleDemo.csproj.CoreCompileInputs.cache
+E:\dotnetcoredemo\ModuleDemo\obj\Debug\netstandard2.0\ModuleDemo.AssemblyInfoInputs.cache
+E:\dotnetcoredemo\ModuleDemo\obj\Debug\netstandard2.0\ModuleDemo.AssemblyInfo.cs
+E:\dotnetcoredemo\ModuleDemo\obj\Debug\netstandard2.0\ModuleDemo.dll
+E:\dotnetcoredemo\ModuleDemo\obj\Debug\netstandard2.0\ModuleDemo.pdb
