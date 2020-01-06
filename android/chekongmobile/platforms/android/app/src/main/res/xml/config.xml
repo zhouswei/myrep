@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget android-versionCode="4" id="com.yushi.chekong" version="1.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <feature name="Whitelist">
+        <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="SplashScreen">
+        <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="Toast">
+        <param name="android-package" value="nl.xservices.plugins.Toast" />
+    </feature>
+    <feature name="HotCodePush">
+        <param name="android-package" value="com.nordnetab.chcp.main.HotCodePushPlugin" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="CustomBridgePlugin">
+        <param name="android-package" value="org.apache.cordova.custombridge.CustomBridgePlugin" />
+    </feature>
+    <name>山海云平台</name>
+    <description>
+        A vehicle monitoring system 
+    </description>
+    <author email="zhou19840902@163.com" href="http://www.baidu.com">
+        app team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <chcp>
+        <auto-download enabled="true" />
+        <auto-install enabled="true" />
+        <config-file url="http://testinfo.szysst.com/download/h5/chcp.json" />
+    </chcp>
+    <allow-intent href="market:*" />
+    <splash density="land-hdpi" src="res/screen/android/drawable-land-hdpi-screen.png" />
+    <splash density="land-ldpi" src="res/screen/android/drawable-land-ldpi-screen.png" />
+    <splash density="land-mdpi" src="res/screen/android/drawable-land-mdpi-screen.png" />
+    <splash density="land-xhdpi" src="res/screen/android/drawable-land-xhdpi-screen.png" />
+    <splash density="land-xxhdpi" src="res/screen/android/drawable-land-xxhdpi-screen.png" />
+    <splash density="land-xxxhdpi" src="res/screen/android/drawable-land-xxxhdpi-screen.png" />
+    <splash density="port-hdpi" src="res/screen/android/drawable-port-hdpi-screen.png" />
+    <splash density="port-ldpi" src="res/screen/android/drawable-port-ldpi-screen.png" />
+    <splash density="port-mdpi" src="res/screen/android/drawable-port-mdpi-screen.png" />
+    <splash density="port-xhdpi" src="res/screen/android/drawable-port-xhdpi-screen.png" />
+    <splash density="port-xxhdpi" src="res/screen/android/drawable-port-xxhdpi-screen.png" />
+    <splash density="port-xxxhdpi" src="res/screen/android/drawable-port-xxxhdpi-screen.png" />
+    <preference name="loglevel" value="DEBUG" />
+    <preference name="loadUrlTimeoutValue" value="60000" />
+</widget>

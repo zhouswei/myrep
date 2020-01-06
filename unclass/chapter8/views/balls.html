@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 Hacks Web Workers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/docs.css" rel="stylesheet">
+    <link href="assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <style type="text/css">
+        #canvas {
+			width: 575px;
+			height: 300px;
+            background-color: #000;
+            cursor: pointer;
+        }
+        #myCanvas {
+            border: 1px solid #9C9898;
+        }
+
+        .thing {
+           position:absolute;
+        }
+        .dying {
+           color:#ff0000;
+           font-weight:bold;
+        }
+
+    </style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
+	<!-- Canvas Balls -->
+
+    <script type="text/javascript">
+    window.requestAnimFrame = (function(callback){
+        return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback){
+            window.setTimeout(callback, 1000 / 60);
+        };
+    })();
+    
+    function initBalls(){
+		console.log('init')
+        balls = [];
+        
+		var black = "#000";
+        var blue = "#3A5BCD";
+        var red = "#EF2B36";
+        var yellow = "#FFC636";
+        var green = "#02A817";
+
+		balls.push(new Ball(0, 0, 0, 0, black));
+		balls.push(new Ball(5, 5, 0, 0, black));
+		balls.push(new Ball(10, 0, 0, 0, black));
+        balls.push(new Ball(15, 10, 0, 0, black));
+        balls.push(new Ball(20, 0, 0, 0, black));
+        balls.push(new Ball(25, 15, 0, 0, black));
+        balls.push(new Ball(30, 0, 0, 0, black));
+        balls.push(new Ball(35, 20, 0, 0, black));
+
+		balls.push(new Ball(100, 0, 0, 0, green));
+		balls.push(new Ball(105, 5, 0, 0, green));
+		balls.push(new Ball(110, 0, 0, 0, green));
+        balls.push(new Ball(115, 10, 0, 0, green));
+        balls.push(new Ball(120, 0, 0, 0, green));
+        balls.push(new Ball(125, 15, 0, 0, green));
+        balls.push(new Ball(130, 0, 0, 0, green));
+        balls.push(new Ball(135, 20, 0, 0, green));
+
+		balls.push(new Ball(200, 0, 0, 0, blue));
+		balls.push(new Ball(205, 5, 0, 0, blue));
+		balls.push(new Ball(210, 0, 0, 0, blue));
+        balls.push(new Ball(215, 10, 0, 0, blue));
+        balls.push(new Ball(220, 0, 0, 0, blue));
+        balls.push(new Ball(225, 15, 0, 0, blue));
+        balls.push(new Ball(230, 0, 0, 0, blue));
+        balls.push(new Ball(235, 20, 0, 0, blue));
+
+		balls.push(new Ball(300, 0, 0, 0, red));
+		balls.push(new Ball(305, 5, 0, 0, red));
+		balls.push(new Ball(310, 0, 0, 0, red));
+        balls.push(new Ball(315, 10, 0, 0, red));
+        balls.push(new Ball(320, 0, 0, 0, red));
+        balls.push(new Ball(325, 15, 0, 0, red));
+        balls.push(new Ball(330, 0, 0, 0, red));
+        balls.push(new Ball(335, 20, 0, 0, red));
+
+		balls.push(new Ball(400, 0, 0, 0, yellow));
+		balls.push(new Ball(405, 5, 0, 0, yellow));
+		balls.push(new Ball(410, 0, 0, 0, yellow));
+        balls.push(new Ball(415, 10, 0, 0, yellow));
+        balls.push(new Ball(420, 0, 0, 0, yellow));
+        balls.push(new Ball(425, 15, 0, 0, yellow));
+        balls.push(new Ball(430, 0, 0, 0, yellow));
+        balls.push(new Ball(435, 20, 0, 0, yellow));        
+        
+        return balls;
+    }
+    
+    function getMousePos(canvas, evt){
+        // get canvas position
+        var obj = canvas;
+        var top = 0;
+        var left = 0;
+        while (obj.tagName != 'BODY') {
+            top += obj.offsetTop;
+            left += obj.offsetLeft;
+            obj = obj.offsetParent;
+        }
+        
+        // return relative mouse position
+        var mouseX = evt.clientX - left + window.pageXOffset;
+        var mouseY = evt.clientY - top + window.pageYOffset;
+        return {
+            x: mouseX,
+            y: mouseY
+        };
+    }
+    
+    function updateBalls(canvas, balls, timeDiff, mousePos){
+        var context = canvas.getContext("2d");
+        var collisionDamper = 0.3;
+        var floorFriction = 0.0005 * timeDiff;
+        var mouseForceMultiplier = 1 * timeDiff;
+        var restoreForce = 0.002 * timeDiff;
+        
+        for (var n = 0; n < balls.length; n++) {
+            var ball = balls[n];
+            // set ball position based on velocity
+            ball.y += ball.vy;
+            ball.x += ball.vx;
+            
+            // restore forces
+            if (ball.x > ball.origX) {
+                ball.vx -= restoreForce;
+            }
+            else {
+                ball.vx += restoreForce;
+            }
+            if (ball.y > ball.origY) {
+                ball.vy -= restoreForce;
+            }
+            else {
+                ball.vy += restoreForce;
+            }
+            
+            // mouse forces
+            var mouseX = mousePos.x;
+            var mouseY = mousePos.y;
+            
+            var distX = ball.x - mouseX;
+            var distY = ball.y - mouseY;
+            
+            var radius = Math.sqrt(Math.pow(distX, 2) +
+            Math.pow(distY, 2));
+            
+            var totalDist = Math.abs(distX) + Math.abs(distY);
+            
+            var forceX = (Math.abs(distX) / totalDist) *
+            (1 / radius) *
+            mouseForceMultiplier;
+            var forceY = (Math.abs(distY) / totalDist) *
+            (1 / radius) *
+            mouseForceMultiplier;
+            
+            if (distX > 0) { // mouse is left of ball
+                ball.vx += forceX;
+            }
+            else {
+                ball.vx -= forceX;
+            }
+            if (distY > 0) { // mouse is on top of ball
+                ball.vy += forceY;
+            }
+            else {
+                ball.vy -= forceY;
+            }
+            
+            // floor friction
+            if (ball.vx > 0) {
+                ball.vx -= floorFriction;
+            }
+            else if (ball.vx < 0) {
+                ball.vx += floorFriction;
+            }
+            if (ball.vy > 0) {
+                ball.vy -= floorFriction;
+            }
+            else if (ball.vy < 0) {
+                ball.vy += floorFriction;
+            }
+            
+            // floor condition
+            if (ball.y > (canvas.height - ball.radius)) {
+                ball.y = canvas.height - ball.radius - 2;
+                ball.vy *= -1;
+                ball.vy *= (1 - collisionDamper);
+            }
+            
+            // ceiling condition
+            if (ball.y < (ball.radius)) {
+                ball.y = ball.radius + 2;
+                ball.vy *= -1;
+                ball.vy *= (1 - collisionDamper);
+            }
+            
+            // right wall condition
+            if (ball.x > (canvas.width - ball.radius)) {
+                ball.x = canvas.width - ball.radius - 2;
+                ball.vx *= -1;
+                ball.vx *= (1 - collisionDamper);
+            }
+            
+            // left wall condition
+            if (ball.x < (ball.radius)) {
+                ball.x = ball.radius + 2;
+                ball.vx *= -1;
+                ball.vx *= (1 - collisionDamper);
+            }
+        }
+    }
+    
+    function Ball(x, y, vx, vy, color){
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.origX = x;
+        this.origY = y;
+        this.radius = 10;
+    }
+    
+    function animate(canvas, balls, lastTime, mousePos){
+        var context = canvas.getContext("2d");
+        
+        // update
+        var date = new Date();
+        var time = date.getTime();
+        var timeDiff = time - lastTime;
+        updateBalls(canvas, balls, timeDiff, mousePos);
+        lastTime = time;
+        
+        // clear
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // render
+        for (var n = 0; n < balls.length; n++) {
+            var ball = balls[n];
+            context.beginPath();
+            context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI, false);
+            context.fillStyle = ball.color;
+            context.fill();
+        }
+        
+        // request new frame
+        requestAnimFrame(function(){
+            animate(canvas, balls, lastTime, mousePos);
+        });
+    }
+    
+   $(document).ready(function() {
+		console.log('onload')
+        var canvas = document.getElementById("myCanvas");
+        var balls = initBalls();
+        var date = new Date();
+        var time = date.getTime();
+        /*
+         * set mouse position really far away
+         * so the mouse forces are nearly obsolete
+         */
+        var mousePos = {
+            x: 9999,
+            y: 9999
+        };
+        
+        canvas.addEventListener("mousemove", function(evt){
+            var pos = getMousePos(canvas, evt);
+            mousePos.x = pos.x;
+            mousePos.y = pos.y;
+        });
+        
+        canvas.addEventListener("mouseout", function(evt){
+            mousePos.x = 9999;
+            mousePos.y = 9999;
+        });
+        
+        animate(canvas, balls, time, mousePos);
+    });
+	</script>
+
+  </head>
+
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+	
+	
+	  <!-- Navbar
+	    ================================================== -->
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </a>
+              <a class="brand" href="/">HTML5 Hacks</a>
+	          <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="">
+                    <a href="./inline.html">Inline</a>
+                    </li>
+                    <li class="active">
+                    <a href="./balls.html">Canvas</a>
+                    </li>
+                    <li class="">
+                    <a href="./artificial.html">AI</a>
+                    </li>
+                    <li class="">
+                    <a href="./processimage.html">Images</a>
+                    </li>
+                    <li class="">
+                    <a href="./jsonp.html">JSONP</a>
+                    </li>                      
+                    <li class="">
+                    <a href="./shared-simple.html">Shared</a>
+                    </li> 
+                    <li class="">
+                    <a href="./transfer.html">Transfer</a>
+                    </li> 
+<!--                     <li class="">
+                    <a href="./modules.html">Modules</a>
+                    </li>  -->                         
+                </ul>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	
+    <div class="container">
+
+		<!-- Masthead
+		================================================== -->
+		<header class="jumbotron subhead" id="overview">
+		  <h1>HTML5 WebWorkers API</h1>
+		  <p class="lead">Canvas demo with High Computation Background Processing (Generate a 2D Array)</p>
+		</header>
+
+		<!-- Forms
+		================================================== -->
+		<section id="forms">
+		  <div class="row">
+		    <div class="span6">
+		      <form class="form-horizontal">
+		        <fieldset>
+			
+			      <div class="control-group">
+		            <label class="control-label" for="select01">Select Row Value</label>
+		            <div class="controls">
+		              <select id="row">
+		                <option>choose a value</option>
+						<option>1000</option>
+						<option>2000</option>
+						<option>3000</option>
+						<option>4000</option>											
+		              </select>
+		            </div>
+		          </div>
+		
+		          <div class="control-group">
+		            <label class="control-label" for="select01">Select Column Value</label>
+		            <div class="controls">
+		              <select id="col">
+		                <option>choose a value</option>
+						<option>1000</option>
+						<option>2000</option>
+						<option>3000</option>
+						<option>4000</option>												
+		              </select>
+		            </div>
+		          </div>
+			
+			      <div class="control-group">
+		            <label class="control-label" for="textarea">Output</label>
+		            <div class="controls">
+		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
+		            </div>
+		          </div>
+		
+		          <div class="control-group">
+		            <label class="control-label" for="textarea">Process</label>
+		            <div class="controls">
+		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
+					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
+		            </div>
+		          </div>
+		        </fieldset>
+		      </form>
+		    </div>
+
+		    <div class="span6">
+			  <!-- <canvas id='canvas'></canvas> -->
+			  <canvas id="myCanvas" width="435" height="200"></canvas>
+			</div>
+		  </div>
+		</section>
+
+     <!-- Footer
+      ================================================== -->
+      <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>HTML5 Hacks</p>
+      </footer>
+    </div><!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+
+    <script type="text/javascript" src="assets/js/demojs/twoDarray.js"></script>
+
+
+
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/google-code-prettify/prettify.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/application.js"></script>
+  </body>
+</html>

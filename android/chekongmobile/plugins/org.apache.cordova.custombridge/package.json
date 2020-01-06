@@ -1,0 +1,17 @@
+{
+  "name": "org.apache.cordova.custombridge",
+  "version": "1.0.0",
+  "description": "",
+  "cordova": {
+    "id": "org.apache.cordova.custombridge",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "zsw",
+  "license": "ISC"
+}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 Hacks Web Workers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/docs.css" rel="stylesheet">
+    <link href="assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <style type="text/css">
+
+
+    </style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+		<script type="text/javascript">
+		function put(id, data, callback) {
+			$.ajax('http://localhost:3000/' + id + '/', {
+				type: 'POST',
+				data: JSON.stringify(data),
+				contentType: 'text/json',
+				success: function() { if ( callback ) callback(true); },
+				error  : function() { if ( callback ) callback(false); }
+			});
+		}
+		function get(id, callback) {
+			$.ajax('http://localhost:3000/' + id + '/', {
+				type: 'GET',
+				dataType: 'json',
+				success: function(data) { if ( callback ) callback(data); },
+				error  : function()     { if ( callback ) callback(null); }
+			});
+		}
+
+
+		//run a simple put/get test
+		put('echo1', { x: 42, friends: ['jdcravens', 'boyofgreen'], label: 'echo...echo...', note: "This object was created on the client, sent to the server, and later retrieved, using JSON transport for both trips." }, function(success) {
+			if ( success ) {
+				get('echo1', function(data) {
+					$('#echo').html(JSON.stringify(data));
+				});
+
+
+				    	var data = {
+				    		example: ["/people/jdcravens", "/people/boyofgreen"]
+				    	};
+
+						var worker = new Worker("javascripts/sync.js"); // Create worker 	
+						worker.postMessage(data.example);
+
+						// Register a handler to get the worker's response
+						worker.onmessage = function(e) {
+
+							console.log(e.data);
+							//var test = JSON.parse(e.data);
+							//var test = JSON.parse('{"test":"test"}');
+							//console.log(test);
+							//console.log(JSON.parse(e.data));
+						}
+
+
+
+
+			} else {
+				alert('put failed!');
+			}
+		});
+
+		// test forms.
+		$(function() {
+
+			$('#get-form').submit(function(e) {
+				e.preventDefault();
+				var id = $('#get-id-field').val();
+				get("people/"+id, function(data) {
+					//if (console) console.log(data);
+					$('#echo').html(JSON.stringify(data));
+				});
+			});
+
+			$('#put-form').submit(function(e) {
+				e.preventDefault();
+				var id = $('#put-id-field').val();
+
+				try { 
+					var value = JSON.parse($('#put-value-field').val());
+				} catch (e) {
+					alert('please use valid JSON in the value box.');
+					return;
+				}
+				put(id, value, function(success) { 
+					if ( success ) {
+						alert('success!');
+						$('#get-id-field').val(id);
+					} else {
+						alert('error!');
+					}
+				});
+			});
+		});
+	</script>
+
+
+    <script type="text/javascript">
+
+	</script>
+
+  </head>
+
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+	
+	
+	  <!-- Navbar
+	    ================================================== -->
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </a>
+	          <a class="brand" href="./index.html">HTML5 Hacks</a>
+	          <div class="nav-collapse">
+	            <ul class="nav">
+	              <li class="">
+	                <a href="./inline.html">Inline</a>
+	              </li>
+	              <li class="">
+	                <a href="./balls.html">Canvas</a>
+	              </li>
+	              <li class="">
+	                <a href="./artificial.html">AI</a>
+	              </li>
+                   <li class="">
+                    <a href="./processimage.html">Images</a>
+                  </li>
+                   <li class="">
+                    <a href="./sync.html">Sync XHR2</a>
+                  </li>   
+                  <li class="">
+                    <a href="./jsonp.html">JSONP</a>
+                  </li>                      
+                  <li class="">
+                    <a href="./debug.html">Debug</a>
+                  </li>
+                  <li class="">
+                    <a href="./shared.html">Shared</a>
+                  </li> 
+                  <li class="">
+                    <a href="./transfer.html">Transfer</a>
+                  </li> 
+                  <li class="">
+                    <a href="./modules.html">Modules</a>
+                  </li> 
+<!--                   <li class="">
+                    <a href="./realtime.html">Realtime</a>
+                  </li>
+                  <li class="">
+                    <a href="./local.html">Storage</a>
+                  </li>   -->                 
+	            </ul>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	
+    <div class="container">
+
+		<!-- Masthead
+		================================================== -->
+		<header class="jumbotron subhead" id="overview">
+		  <h1>HTML5 WebWorkers API</h1>
+		  <p class="lead">Make Synchronous XHRs Within a Web Worker</p>
+		</header>
+
+		<!-- Forms
+		================================================== -->
+		<section id="forms">
+		  <div class="row">
+		    <div class="span6">
+
+		    	<div id="timestamp" class="box">
+					Timestamp: <script>document.write(new Date());</script>
+				</div>
+
+				<div id="echo" class="box">
+				</div>
+
+				<div id="get" class="box">
+				Get
+					<form id="get-form" method="POST">
+						ID:<input name="id" id="get-id-field" value="quote1"><br>
+						<button id="get-button" type="submit">Get</button>
+					</form>
+				</div>
+
+				<div id="put" class="box">
+				Put
+					<form id="put-form" method="POST">
+						ID:<input name="id" id="put-id-field" value="pet1"><br>
+						JSON Value:<textarea name="value" id="put-value-field">{ "name": "Sparkles", "species": "Dog", "age": 3 }</textarea><br>
+						<button id="put-button" type="submit">Put</button>
+					</form>
+				</div>
+
+
+		    </div>
+
+		    <div class="span6">
+			  <!-- <canvas id='canvas'></canvas> -->
+			  <canvas id="myCanvas" width="435" height="200"></canvas>
+			</div>
+		  </div>
+		</section>
+
+     <!-- Footer
+      ================================================== -->
+      <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>HTML5 Hacks</p>
+      </footer>
+    </div><!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+	
+    <script type="text/javascript">
+
+  //   	var data = {
+  //   		example: ["/data/example.json", "/data/example2.json"]
+  //   	};
+
+		// var worker = new Worker("javascripts/sync.js"); // Create worker 	
+		// //worker.postMessage(data.example);
+
+		// // Register a handler to get the worker's response
+		// worker.onmessage = function(e) {
+
+		// 	console.log(e.data);
+		// 	var test = JSON.parse(e.data);
+		// 	//var test = JSON.parse('{"test":"test"}');
+		// 	console.log(test);
+		// 	//console.log(JSON.parse(e.data));
+		// }
+
+
+    </script>
+
+    <!-- <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+-->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/google-code-prettify/prettify.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/application.js"></script>
+  </body>
+</html>

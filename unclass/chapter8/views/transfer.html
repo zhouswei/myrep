@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 Hacks Web Workers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/docs.css" rel="stylesheet">
+    <link href="assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <style type="text/css">
+
+    </style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="javascripts/transfer-shared.js"></script>
+
+  </head>
+
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+	
+	  <!-- Navbar
+	    ================================================== -->
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </a>
+	          <a class="brand" href="./index.html">HTML5 Hacks</a>
+	          <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="">
+                    <a href="./inline.html">Inline</a>
+                    </li>
+                    <li class="">
+                    <a href="./balls.html">Canvas</a>
+                    </li>
+                    <li class="">
+                    <a href="./artificial.html">AI</a>
+                    </li>
+                    <li class="">
+                    <a href="./processimage.html">Images</a>
+                    </li>
+                    <li class="">
+                    <a href="./jsonp.html">JSONP</a>
+                    </li>                      
+                    <li class="">
+                    <a href="./shared-simple.html">Shared</a>
+                    </li> 
+                    <li class="active">
+                    <a href="./transfer.html">Transfer</a>
+                    </li> 
+                    <!-- <li class="">
+                    <a href="./modules.html">Modules</a>
+                    </li> -->                      
+                </ul>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	
+    <div class="container">
+
+		<!-- Masthead
+		================================================== -->
+		<header class="jumbotron subhead" id="overview">
+		  <h1>HTML5 WebWorkers API</h1>
+		  <p class="lead">Parse Large Data Sets Efficiently with Transferrable Objects</p>
+		</header>
+
+		  <div class="row">
+		    <div class="">
+				<section>
+				  <p><a href="http://dev.w3.org/html5/spec/common-dom-interfaces.html#transferable-objects" target="_blank">Transferable Objects</a> are lightning fast! The prefixed <code>[window|worker].webkitPostMessage()</code>
+				  now supports sending an <code>ArrayBuffer</code> as a transferable.</p>
+				  <button onclick="test();">Run test</button>
+				  <!--<input type="checkbox" id="enable-transferable" checked> Enable transferable?-->
+				  <pre id="result"></pre>
+				</section>
+
+		    </div>
+
+		    <div class="span6">
+
+			</div>
+		  </div>
+
+     <!-- Footer
+      ================================================== -->
+      <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>HTML5 Hacks</p>
+      </footer>
+    </div><!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+	<script type="text/javascript">
+		
+
+// set some constants/vars
+var SIZE = 1024 * 1024 * 32; // 32MB for our data
+var arrayBuffer = null;
+var uInt8View = null;
+var originalLength = null;
+
+// build our example array of 32MB numbers
+// later in the worker we will work on them with some simple math operations
+function setupArray() {
+	console.log("setupArray called")
+  arrayBuffer = new ArrayBuffer(SIZE);
+  uInt8View = new Uint8Array(arrayBuffer);
+  originalLength = uInt8View.length;
+
+  for (var i = 0; i < originalLength; ++i) {
+    uInt8View[i] = i;
+  }
+
+  log(source() + 'filled ' + toMB(originalLength) + ' MB buffer');
+}
+
+//
+// helper functions to measure performance
+//
+
+// return time stemp
+function time() {
+  var now = new Date();
+  var time = /(\d+:\d+:\d+)/.exec(now)[0] + ':';
+  for (var ms = String(now.getMilliseconds()), i = ms.length - 3; i < 0; ++i) {
+    time += '0';
+  }
+  return time + ms;
+}
+
+// We are now our page (on the worker will have some nice RED color for the answers)
+function source() {
+    return '<span style="color:green;">Our page:</span> ';
+}
+
+function seconds(since) {
+  return (new Date() - since) / 1000.0;
+}
+
+function toMB(bytes) {
+  return Math.round(bytes / 1024 / 1024);
+}
+
+
+
+		var worker = null;
+		var startTime = 0;
+		var supported = false;
+
+
+		function log(str) {
+		  var elem = document.getElementById('result');
+		  var log = function(s) {
+		   elem.innerHTML += ''.concat(time(), ' ', s, '\n');
+		  };
+		  log(str);
+		}
+
+		function init() {
+		  worker = new Worker('javascripts/transfer.js');
+
+		  // Take care of vendor prefixes.
+		  worker.postMessage = worker.webkitPostMessage || worker.postMessage;
+
+		  worker.onmessage = function(e) {
+		    console.timeEnd('actual postMessage round trip was');
+		    // capture elapsed time since the original postMessage();
+		    if (!e.data.type) {
+		      var elapsed = seconds(startTime);
+		    }
+
+		    var data = e.data;
+
+		    if (data.type && data.type == 'debug') {
+		      log(data.msg);
+		    } else {
+		      var rate = Math.round(toMB(data.byteLength) / elapsed);
+		      log(source() + 'postMessage roundtrip took: ' + (elapsed * 1000) + ' ms');
+		      log(source() + 'postMessage roundtrip rate: ' + rate + ' MB/s');
+		    }
+		  };
+
+		  // To feature detect: send a small ArrayBuffer. If transferable objects are
+		  // supported, the ArrayBuffer will be neutered (cleared out) after sent.
+		  if (USE_TRANSFERRABLE) {
+		    var ab = new ArrayBuffer(1);
+		    try {
+		      worker.postMessage(ab, [ab]);
+		      if (ab.byteLength) {
+		        alert('Transferables are not supported in your browser!');
+		        log(source() + 'USING STRUCTURED CLONE (copy) :(');
+		      } else {
+		        log(source() + 'USING TRANSFERABLE OBJECTS :)');
+		        supported = true;
+		      }
+		    } catch(e) {
+		      alert('Transferables are not supported in your browser!');
+		    }
+		  } else {
+		    worker.postMessage(ab); // send anyway to init worker.
+		    log(source() + 'USING STRUCTURED CLONE (copy) :(');
+		  }
+
+		  log(source() + 'READY!');
+		}
+
+		function test() {
+
+		  setupArray(); // Need to do this on every run for the repeated runs with transferable arrays. They're cleared out after they're transferred.
+
+		  startTime = new Date();
+		  console.time('actual postMessage round trip was');
+
+		  if (USE_TRANSFERRABLE && supported) {
+		    // Note: clears the uInt8View and it's underlying ArrayBuffer, transfering it
+		    // out of this view, to the worker.
+		    // Passing multiple transferables:
+		    //   worker.webkitPostMessage({view1: int8View, buffer2: anotherBuffer}, [int8View.buffer, anotherBuffer]);
+		    //   window.webkitPostMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
+		    worker.postMessage(uInt8View.buffer, [uInt8View.buffer]);
+		  } else {
+		    worker.postMessage(uInt8View.buffer);
+		  }
+		}
+
+		window.addEventListener('load', function(e) {
+		  init();
+		}, false);
+	</script>
+    <!-- <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+-->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/google-code-prettify/prettify.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/application.js"></script>
+  </body>
+</html>

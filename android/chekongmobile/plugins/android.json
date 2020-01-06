@@ -1,0 +1,27 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "io.cordova.hellocordova"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.yushi.chekong"
+    },
+    "cordova-plugin-x-toast": {
+      "PACKAGE_NAME": "com.yushi.chekong"
+    },
+    "cordova-hot-code-push-plugin": {
+      "PACKAGE_NAME": "com.yushi.chekong"
+    },
+    "org.apache.cordova.custombridge": {
+      "PACKAGE_NAME": "com.yushi.chekong"
+    }
+  },
+  "dependent_plugins": {}
+}
