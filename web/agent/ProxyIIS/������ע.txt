@@ -1,0 +1,3 @@
+1、IIS必须跑在经典模式下。
+
+2、发布的时候，必须将web.config、nopage.aspx、nopage.aspx.cs一同打包到根目录下。发布到IIS上。
